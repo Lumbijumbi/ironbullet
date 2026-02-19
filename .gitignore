@@ -5,3 +5,16 @@ gui/.svelte-kit/
 *.exe
 sidecar/go.sum
 
+# Build artifacts
+/ironbullet
+/reqflow-sidecar
+*.dmg
+*.deb
+*.rpm
+*.tar.gz
+*.zip
+
+# macOS specific
+.DS_Store
+*.app
+

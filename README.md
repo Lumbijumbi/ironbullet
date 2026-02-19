@@ -5,6 +5,14 @@
 
 Visual pipeline builder for HTTP automation and credential checking. Build complex automation workflows using a drag-and-drop block-based interface with 50+ specialized blocks.
 
+## Platform Support
+
+✅ **Windows** - Full support  
+✅ **macOS** - Full support (macOS 10.13+, Intel & Apple Silicon)  
+✅ **Linux** - Full support
+
+See [MACOS_COMPATIBILITY.md](MACOS_COMPATIBILITY.md) for macOS-specific setup and troubleshooting.
+
 ## Features
 
 - Visual block-based pipeline editor with drag-and-drop
