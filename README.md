@@ -19,9 +19,13 @@ Visual pipeline builder for HTTP automation and credential checking. Build compl
 
 ## Installation
 
-Download the latest release from [Releases](https://github.com/ZeraTS/ironbullet/releases) and extract the archive. Run `ironbullet.exe` to start the application.
+Download the latest release from [Releases](https://github.com/ZeraTS/ironbullet/releases) and extract the archive. 
 
-**Note:** The sidecar binary (`reqflow-sidecar.exe`) must be in the same directory.
+**Windows:** Run `ironbullet.exe` to start the application.  
+**macOS:** Run `ironbullet` from the terminal or double-click the application bundle.  
+**Linux:** Run `./ironbullet` from the terminal.
+
+**Note:** The sidecar binary (`reqflow-sidecar.exe` on Windows, `reqflow-sidecar` on macOS/Linux) must be in the same directory.
 
 ## Quick Start
 
@@ -46,6 +50,8 @@ Download the latest release from [Releases](https://github.com/ZeraTS/ironbullet
 
 Requirements: Rust 1.70+, Node.js 20+, Go 1.23+
 
+### Windows
+
 ```bash
 git clone https://github.com/ZeraTS/ironbullet.git
 cd ironbullet
@@ -58,6 +64,41 @@ cd gui && npm install && npm run build
 
 # Build sidecar
 cd ../sidecar && go build -o reqflow-sidecar.exe
+```
+
+### macOS
+
+```bash
+git clone https://github.com/ZeraTS/ironbullet.git
+cd ironbullet
+
+# Build backend
+cargo build --release
+
+# Build frontend
+cd gui && npm install && npm run build
+
+# Build sidecar
+cd ../sidecar && go build -o reqflow-sidecar
+
+# The binary will be at target/release/ironbullet
+# Run with: ./target/release/ironbullet
+```
+
+### Linux
+
+```bash
+git clone https://github.com/ZeraTS/ironbullet.git
+cd ironbullet
+
+# Build backend
+cargo build --release
+
+# Build frontend
+cd gui && npm install && npm run build
+
+# Build sidecar
+cd ../sidecar && go build -o reqflow-sidecar
 ```
 
 ## License

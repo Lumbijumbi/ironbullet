@@ -1,4 +1,4 @@
-#![windows_subsystem = "windows"]
+#![cfg_attr(target_os = "windows", windows_subsystem = "windows")]
 
 mod ipc;
 
@@ -218,7 +218,11 @@ fn position_window(
 fn run_gui() {
     // Clean up old binary from previous update
     if let Ok(exe) = std::env::current_exe() {
+        #[cfg(target_os = "windows")]
         let old = exe.with_extension("old.exe");
+        #[cfg(not(target_os = "windows"))]
+        let old = exe.with_extension("old");
+        
         if old.exists() {
             let _ = std::fs::remove_file(&old);
         }

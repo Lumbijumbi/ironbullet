@@ -57,7 +57,11 @@ fn def_zoom() -> u32 { 100 }
 fn def_font_size() -> u32 { 12 }
 fn def_font_family() -> String { "Cascadia Code".into() }
 fn def_max_threads() -> u32 { 100 }
+#[cfg(target_os = "windows")]
 fn def_sidecar_path() -> String { "reqflow-sidecar.exe".into() }
+
+#[cfg(not(target_os = "windows"))]
+fn def_sidecar_path() -> String { "reqflow-sidecar".into() }
 fn def_left_panel_width() -> u32 { 200 }
 fn def_bottom_panel_height() -> u32 { 250 }
 fn def_show_palette() -> bool { true }
@@ -75,7 +79,10 @@ impl Default for GuiConfig {
             last_config_path: String::new(),
             recent_configs: Vec::new(),
             default_threads: 100,
+            #[cfg(target_os = "windows")]
             sidecar_path: "reqflow-sidecar.exe".into(),
+            #[cfg(not(target_os = "windows"))]
+            sidecar_path: "reqflow-sidecar".into(),
             left_panel_width: 200,
             bottom_panel_height: 250,
             show_block_palette: true,
@@ -88,11 +95,42 @@ impl Default for GuiConfig {
 }
 
 pub fn config_dir() -> PathBuf {
-    if let Some(appdata) = std::env::var_os("APPDATA") {
-        let dir = PathBuf::from(appdata).join("ironbullet");
-        let _ = std::fs::create_dir_all(&dir);
-        return dir;
+    #[cfg(target_os = "windows")]
+    {
+        if let Some(appdata) = std::env::var_os("APPDATA") {
+            let dir = PathBuf::from(appdata).join("ironbullet");
+            let _ = std::fs::create_dir_all(&dir);
+            return dir;
+        }
     }
+    
+    #[cfg(target_os = "macos")]
+    {
+        if let Some(home) = std::env::var_os("HOME") {
+            let dir = PathBuf::from(home).join("Library/Application Support/ironbullet");
+            let _ = std::fs::create_dir_all(&dir);
+            return dir;
+        }
+    }
+    
+    #[cfg(target_os = "linux")]
+    {
+        // Follow XDG Base Directory specification
+        if let Some(xdg_config) = std::env::var_os("XDG_CONFIG_HOME") {
+            if !xdg_config.is_empty() {
+                let dir = PathBuf::from(xdg_config).join("ironbullet");
+                let _ = std::fs::create_dir_all(&dir);
+                return dir;
+            }
+        }
+        if let Some(home) = std::env::var_os("HOME") {
+            let dir = PathBuf::from(home).join(".config/ironbullet");
+            let _ = std::fs::create_dir_all(&dir);
+            return dir;
+        }
+    }
+    
+    // Fallback to current directory
     PathBuf::from(".")
 }
 

@@ -68,13 +68,20 @@ pub fn check_for_updates(
         let release_notes = body["body"].as_str().unwrap_or("");
         let published_at = body["published_at"].as_str().unwrap_or("");
 
-        // Find the Windows binary asset
+        // Find the platform-specific binary asset
         let download_url = body["assets"]
             .as_array()
             .and_then(|assets| {
                 assets.iter().find_map(|a| {
                     let name = a["name"].as_str().unwrap_or("");
-                    if name.ends_with(".exe") || name.contains("windows") {
+                    #[cfg(target_os = "windows")]
+                    let matches = name.ends_with(".exe") || name.contains("windows");
+                    #[cfg(target_os = "macos")]
+                    let matches = name.ends_with(".dmg") || name.contains("macos") || name.contains("darwin");
+                    #[cfg(target_os = "linux")]
+                    let matches = name.contains("linux") && !name.contains("windows") && !name.contains("macos");
+                    
+                    if matches {
                         a["browser_download_url"].as_str().map(|s| s.to_string())
                     } else {
                         None
@@ -164,8 +171,15 @@ pub fn download_update(
             }
         };
 
+        #[cfg(target_os = "windows")]
         let update_path = current_exe.with_extension("update.exe");
+        #[cfg(target_os = "windows")]
         let backup_path = current_exe.with_extension("old.exe");
+        
+        #[cfg(not(target_os = "windows"))]
+        let update_path = current_exe.with_extension("update");
+        #[cfg(not(target_os = "windows"))]
+        let backup_path = current_exe.with_extension("old");
 
         // Download to temp file with progress
         let mut file = match tokio::fs::File::create(&update_path).await {
