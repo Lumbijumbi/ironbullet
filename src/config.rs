@@ -117,8 +117,9 @@ pub fn config_dir() -> PathBuf {
     {
         // Follow XDG Base Directory specification
         if let Some(xdg_config) = std::env::var_os("XDG_CONFIG_HOME") {
-            if !xdg_config.is_empty() {
-                let dir = PathBuf::from(xdg_config).join("ironbullet");
+            let xdg_path = PathBuf::from(xdg_config);
+            if !xdg_path.as_os_str().is_empty() {
+                let dir = xdg_path.join("ironbullet");
                 let _ = std::fs::create_dir_all(&dir);
                 return dir;
             }
